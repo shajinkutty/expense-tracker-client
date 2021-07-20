@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
+import { useDispatch, useSelector } from "react-redux";
+import { checkUserIsActive, userLogin } from "../redux/actions";
+import { useHistory } from "react-router-dom";
+import LoadingSpinners from "../components/LoadingSpinner";
+import FetchLoader from "../components/FetchLoader";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -24,6 +29,28 @@ const useStyles = makeStyles((theme) => ({
 
 function Login() {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const { loading, pageLoading, authenticated } = useSelector(
+    (state) => state.expense
+  );
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+
+  const history = useHistory();
+
+  useEffect(() => {
+    if (authenticated) {
+      history.push("/dashboard");
+    }
+  }, [authenticated]);
+
+  useEffect(() => {
+    dispatch(checkUserIsActive());
+  }, []);
+
+  if (pageLoading) {
+    return <LoadingSpinners />;
+  }
   return (
     <Container>
       <Grid container className={classes.container}>
@@ -35,6 +62,8 @@ function Login() {
               label="User Name"
               variant="outlined"
               className={classes.input}
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
             />
             <TextField
               id="password"
@@ -42,16 +71,20 @@ function Login() {
               variant="outlined"
               className={classes.input}
               type="password"
+              vlue={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <Button
               variant="contained"
               color="secondary"
               disableElevation
               className={classes.button}
+              onClick={() => dispatch(userLogin(userName, password))}
             >
               sign in
             </Button>
           </form>
+          {loading && <FetchLoader />}
         </Grid>
         <Grid item xs={12} md={3}></Grid>
       </Grid>

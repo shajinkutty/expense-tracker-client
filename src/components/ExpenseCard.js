@@ -8,8 +8,12 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import { green } from "@material-ui/core/colors";
 import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
 import { useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { alertAction } from "../redux/actions";
+// import Moment from "react-moment";
+// import "moment-timezone";
+import Moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,10 +40,23 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(10),
     height: theme.spacing(5),
   },
+  header: {
+    padding: theme.spacing(1),
+  },
+  content: {
+    padding: theme.spacing(1),
+  },
 }));
 
-export default function ExpenseCard() {
+export default function ExpenseCard({
+  amount,
+  description,
+  userId,
+  date,
+  _id,
+}) {
   const [showIcons, setShowIcons] = useState(false);
+  const dispatch = useDispatch();
   const classes = useStyles();
   const location = useLocation();
 
@@ -51,36 +68,49 @@ export default function ExpenseCard() {
     }
   }, [location]);
 
+  const deleteHandler = (id, amount) => {
+    dispatch(
+      alertAction("Are you sure you want to delete this?", "delete", {
+        id,
+        amount,
+      })
+    );
+  };
+
   return (
     <Card className={classes.root} elevation={1}>
       <CardHeader
+        className={classes.header}
         avatar={
           <Avatar
             aria-label="recipe"
             className={classes.avatar}
             variant="rounded"
           >
-            1589.50
+            {amount}
           </Avatar>
         }
         action={
           showIcons && (
             <>
-              <IconButton aria-label="settings">
+              {/* <IconButton aria-label="settings">
                 <EditIcon />
-              </IconButton>
-              <IconButton aria-label="settings">
+              </IconButton> */}
+              <IconButton
+                aria-label="settings"
+                onClick={() => deleteHandler(_id, amount)}
+              >
                 <DeleteIcon />
               </IconButton>
             </>
           )
         }
-        title="Shajin Kuttappan"
-        subheader="September 14, 2016"
+        title={userId.fullName}
+        subheader={Moment(date).format("LL")}
       />
-      <CardContent>
+      <CardContent className={classes.content}>
         <Typography variant="body2" color="textSecondary" component="p">
-          Description
+          {description}
         </Typography>
       </CardContent>
     </Card>

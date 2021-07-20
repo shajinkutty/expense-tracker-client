@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/styles";
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,34 +28,48 @@ const useStyles = makeStyles((theme) => ({
   },
   label: {
     fontSize: "10px",
-    color: "#f1f1f1",
     textTransform: "uppercase",
   },
   text: {
     fontSize: theme.spacing(5),
     // color: "#ffff",
   },
+  green: {
+    color: "#03ff03",
+  },
+  red: {
+    color: "red",
+  },
 }));
 
 function TotalExpenseCard() {
   const classes = useStyles();
+  const { result } = useSelector((state) => state.expense);
+  const { LiveTotalAmount, userExpense, totalMembers } = result;
+
+  useEffect(() => {}, [result]);
+
+  const position = () =>
+    (userExpense - LiveTotalAmount / totalMembers).toFixed(2);
   return (
     <>
       <Grid item xs={6}>
         <Paper className={classes.circle}>
           <Typography className={classes.label}>Total Expense</Typography>
           <Typography className={classes.text} color="secondary">
-            1424.00
+            {LiveTotalAmount ? LiveTotalAmount : 0}
           </Typography>
         </Paper>
       </Grid>
       <Grid item xs={6}>
         <Paper className={classes.circle} elevation={1}>
-          <Typography className={classes.label}>My Contribution</Typography>
-          <Typography className={classes.secondaryText}>424.00</Typography>
-          <Typography className={classes.label}>Position</Typography>
-          <Typography className={classes.secondaryText} color="error">
-            -12.00
+          <Typography className={classes.label}>Your Contribution</Typography>
+          <Typography className={classes.secondaryText} color="textPrimary">
+            {userExpense ? userExpense : 0}
+          </Typography>
+          <Typography className={classes.label}>Status</Typography>
+          <Typography className={position() >= 0 ? classes.green : classes.red}>
+            {position() ? position() : 0}
           </Typography>
         </Paper>
       </Grid>

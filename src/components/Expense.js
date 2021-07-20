@@ -8,6 +8,8 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import Avatar from "@material-ui/core/Avatar";
 import { makeStyles } from "@material-ui/core";
 import { deepOrange } from "@material-ui/core/colors";
+import Moment from "react-moment";
+import "moment-timezone";
 
 const useStyles = makeStyles((theme) => ({
   inline: {
@@ -42,7 +44,9 @@ function Expense({ name, price, date, description }) {
         <ListItemSecondaryAction>
           <div className={classes.secondaryList}>
             <Typography className={classes.price}>{price}</Typography>
-            <Typography className={classes.date}>{date}</Typography>
+            <Typography className={classes.date}>
+              <Moment date={new Date(date)} titleFormat="D MMM YYYY" />
+            </Typography>
           </div>
         </ListItemSecondaryAction>
       </ListItem>

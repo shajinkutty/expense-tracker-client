@@ -25,7 +25,7 @@ export default function FloatingActionButtons() {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname !== "/") {
+    if (location.pathname !== "/dashboard") {
       setshowFab(false);
     } else {
       setshowFab(true);

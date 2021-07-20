@@ -16,11 +16,23 @@ import Reports from "./routes/Reports";
 import AlertDialog from "./components/AlertDialog";
 import FullScreenDialog from "./components/FullScreenDialog";
 
+import { useDispatch } from "react-redux";
+import PrivateRoute from "./routes/PrivateRoute";
+import CustomizedSnackbars from "./components/CustomizedSnackbar";
+import { useEffect } from "react";
+import { socket } from "./socket";
+import {
+  socketApproveExpense,
+  socketCloseExpense,
+  socketDeleteExpense,
+  socketExpenseUpdate,
+} from "./redux/actions";
+
 const theme = createMuiTheme({
   palette: {
     type: "dark",
-    primary: deepOrange,
-    secondary: lightBlue,
+    primary: lightBlue,
+    secondary: deepOrange,
   },
   props: {
     MuiCard: {
@@ -37,6 +49,25 @@ const useStyles = makeStyles((theme) => ({
 }));
 function App() {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    socket.on("receive-expense", (data) => {
+      dispatch(socketExpenseUpdate(data));
+    });
+    socket.on("receive-close-expense", (data) => {
+      dispatch(socketCloseExpense(data));
+    });
+    socket.on("receive-approve-expense", (data) => {
+      dispatch(socketApproveExpense(data));
+    });
+    socket.on("receive-delete-expense", ({ id, amount }) => {
+      dispatch(socketDeleteExpense(id, amount));
+    });
+    return () => {
+      socket.off();
+    };
+  }, [dispatch]);
 
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -45,28 +76,29 @@ function App() {
           <Container className={classes.root}>
             <ApplicationBar />
             <FullScreenDialog open={false} />
-            <AlertDialog open={false} />
+            <AlertDialog />
             <Switch>
-              <Route path="/" exact>
+              <PrivateRoute path="/dashboard">
                 <Dashboard></Dashboard>
-              </Route>
-              <Route path="/login">
-                <Login />
-              </Route>
-              <Route path="/addExpense">
-                <AddExpense />
-              </Route>
-              <Route path="/userExpense">
-                <UserExpense />
-              </Route>
-              <Route path="/changePassword">
-                <PasswordChange />
-              </Route>
-              <Route path="/reports">
-                <Reports />
+              </PrivateRoute>
+              <PrivateRoute path="/addExpense">
+                <AddExpense></AddExpense>
+              </PrivateRoute>
+              <PrivateRoute path="/userExpense">
+                <UserExpense></UserExpense>
+              </PrivateRoute>
+              <PrivateRoute path="/changePassword">
+                <PasswordChange></PasswordChange>
+              </PrivateRoute>
+              <PrivateRoute path="/reports">
+                <Reports></Reports>
+              </PrivateRoute>
+              <Route path="/" exact>
+                <Login></Login>
               </Route>
             </Switch>
             <FloatingActionButtons></FloatingActionButtons>
+            <CustomizedSnackbars />
           </Container>
         </Router>
       </ThemeProvider>

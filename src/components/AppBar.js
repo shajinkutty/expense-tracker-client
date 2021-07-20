@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import clsx from "clsx";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
@@ -21,8 +21,8 @@ import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import LockIcon from "@material-ui/icons/Lock";
-import ListAltIcon from "@material-ui/icons/ListAlt";
-import AlertDialog from "./AlertDialog";
+import { alertAction, userLogout } from "../redux/actions";
+import { useDispatch, useSelector } from "react-redux";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -89,7 +89,7 @@ const useStyles = makeStyles((theme) => ({
 const menuItems = [
   {
     title: "Dashboard",
-    path: "/",
+    path: "/dashboard",
     icon: <DashboardIcon />,
   },
   {
@@ -97,11 +97,11 @@ const menuItems = [
     path: "/userExpense",
     icon: <MoneyIcon />,
   },
-  {
-    title: "Report",
-    path: "/reports",
-    icon: <ListAltIcon />,
-  },
+  // {
+  //   title: "Report",
+  //   path: "/reports",
+  //   icon: <ListAltIcon />,
+  // },
 ];
 const secondaryItems = [
   {
@@ -109,17 +109,15 @@ const secondaryItems = [
     path: "/changePassword",
     icon: <LockIcon />,
   },
-  {
-    title: "Sign Out",
-    path: "/login",
-    icon: <ExitToAppIcon />,
-  },
 ];
 
 export default function PersistentDrawerLeft() {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const { authenticated, result } = useSelector((state) => state.expense);
+  const { user, LiveTotalAmount } = result;
+  const dispatch = useDispatch();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -127,6 +125,11 @@ export default function PersistentDrawerLeft() {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const handleSignOut = () => {
+    dispatch(userLogout());
+    handleDrawerClose();
   };
 
   return (
@@ -140,79 +143,100 @@ export default function PersistentDrawerLeft() {
         elevation={0}
       >
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            className={clsx(classes.menuButton, open && classes.hide)}
-          >
-            <MenuIcon />
-          </IconButton>
+          {authenticated && (
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              className={clsx(classes.menuButton, open && classes.hide)}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
           <Typography variant="h6" noWrap>
             Expense Tracker
           </Typography>
         </Toolbar>
       </AppBar>
 
-      <Drawer
-        className={classes.drawer}
-        variant="persistent"
-        anchor="left"
-        open={open}
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-      >
-        <div className={classes.drawerHeader}>
-          <Typography>SHAJIN KUTTAPPAN</Typography>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "ltr" ? (
-              <ChevronLeftIcon />
-            ) : (
-              <ChevronRightIcon />
-            )}
-          </IconButton>
-        </div>
-        <Divider />
-        <List>
-          {menuItems.map((item, index) => (
-            <ListItem
-              button
-              key={index}
-              component={Link}
-              to={item.path}
-              onClick={handleDrawerClose}
-            >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.title} />
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {secondaryItems.map((item, index) => (
-            <ListItem
-              button
-              key={index}
-              component={Link}
-              to={item.path}
-              onClick={handleDrawerClose}
-            >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.title} />
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <Button
-          variant="outlined"
-          color="primary"
-          className={classes.closeButton}
+      {authenticated && (
+        <Drawer
+          className={classes.drawer}
+          variant="persistent"
+          anchor="left"
+          open={open}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
         >
-          Close Live Expense
-        </Button>
-      </Drawer>
+          <div className={classes.drawerHeader}>
+            <Typography>{user.fullName}</Typography>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === "ltr" ? (
+                <ChevronLeftIcon />
+              ) : (
+                <ChevronRightIcon />
+              )}
+            </IconButton>
+          </div>
+          <Divider />
+          <List>
+            {menuItems.map((item, index) => (
+              <ListItem
+                button
+                key={index}
+                component={Link}
+                to={item.path}
+                onClick={handleDrawerClose}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.title} />
+              </ListItem>
+            ))}
+          </List>
+          <Divider />
+          <List>
+            {secondaryItems.map((item, index) => (
+              <ListItem
+                button
+                key={index}
+                component={Link}
+                to={item.path}
+                onClick={handleDrawerClose}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.title} />
+              </ListItem>
+            ))}
+            <ListItem button onClick={handleSignOut}>
+              <ListItemIcon>
+                <ExitToAppIcon />
+              </ListItemIcon>
+              <ListItemText primary="Sign Out" />
+            </ListItem>
+          </List>
+          <Divider />
+          {LiveTotalAmount > 0 && (
+            <Button
+              variant="outlined"
+              color="primary"
+              className={classes.closeButton}
+              onClick={() => {
+                handleDrawerClose();
+                dispatch(
+                  alertAction(
+                    "Are you sure you want to close this expense?",
+                    "close expense"
+                  )
+                );
+              }}
+            >
+              Close Live Expense
+            </Button>
+          )}
+        </Drawer>
+      )}
     </div>
   );
 }
