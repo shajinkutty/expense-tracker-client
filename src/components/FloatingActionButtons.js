@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
 import { Link, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,6 +24,7 @@ export default function FloatingActionButtons() {
   const classes = useStyles();
   const [showFab, setshowFab] = useState(true);
   const location = useLocation();
+  const { user } = useSelector((state) => state.expense.result);
 
   useEffect(() => {
     if (location.pathname !== "/dashboard") {
@@ -34,7 +36,7 @@ export default function FloatingActionButtons() {
 
   return (
     <div className={classes.root}>
-      {showFab && (
+      {showFab && user.active && (
         <Fab
           color="secondary"
           aria-label="add"

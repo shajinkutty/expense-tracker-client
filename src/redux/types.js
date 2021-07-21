@@ -6,6 +6,8 @@ export const LOGOUT = "LOGOUT";
 export const USER_ACTIVE = "USER_ACTIVE";
 export const USER_LOGOUT = "USER_LOGOUT";
 export const CHANGE_PASSWORD = "CHANGE_PASSWORD";
+export const CHANGE_USER_STATUS = "CHANGE_USER_STATUS";
+export const ADD_NEW_USER = "ADD_NEW_USER";
 
 export const LOADING = "LOADING";
 export const FETCH_INIT = "FETCH_INIT";
@@ -28,6 +30,9 @@ export const IO_ADD_EXPENSE = "IO_ADD_EXPENSE";
 export const IO_CLOSE_EXPENSE = "IO_CLOSE_EXPENSE";
 export const IO_APPROVE_EXPENSE = "IO_APPROVE_EXPENSE";
 export const IO_DELETE_EXPENSE = "IO_DELETE_EXPENSE";
+export const IO_USER_STATUS = "IO_USER_STATUS";
+
+export const FETCH_USERS = "FETCH_USERS";
 
 export const RESET_EXPENSE = "RESET_EXPENSE";
 

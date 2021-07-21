@@ -20,6 +20,7 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import DashboardIcon from "@material-ui/icons/Dashboard";
+import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
 import LockIcon from "@material-ui/icons/Lock";
 import { alertAction, userLogout } from "../redux/actions";
 import { useDispatch, useSelector } from "react-redux";
@@ -97,11 +98,11 @@ const menuItems = [
     path: "/userExpense",
     icon: <MoneyIcon />,
   },
-  // {
-  //   title: "Report",
-  //   path: "/reports",
-  //   icon: <ListAltIcon />,
-  // },
+  {
+    title: "Users",
+    path: "/admin/dashboard",
+    icon: <SupervisorAccountIcon />,
+  },
 ];
 const secondaryItems = [
   {

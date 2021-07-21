@@ -23,10 +23,12 @@ import { useEffect } from "react";
 import { socket } from "./socket";
 import {
   socketApproveExpense,
+  socketChangeUserStatus,
   socketCloseExpense,
   socketDeleteExpense,
   socketExpenseUpdate,
 } from "./redux/actions";
+import Admin from "./routes/Admin";
 
 const theme = createMuiTheme({
   palette: {
@@ -64,6 +66,9 @@ function App() {
     socket.on("receive-delete-expense", ({ id, amount }) => {
       dispatch(socketDeleteExpense(id, amount));
     });
+    socket.on("receive-user-status", ({ id, currentStatus }) => {
+      dispatch(socketChangeUserStatus(id, currentStatus));
+    });
     return () => {
       socket.off();
     };
@@ -92,6 +97,9 @@ function App() {
               </PrivateRoute>
               <PrivateRoute path="/reports">
                 <Reports></Reports>
+              </PrivateRoute>
+              <PrivateRoute path="/admin/dashboard">
+                <Admin />
               </PrivateRoute>
               <Route path="/" exact>
                 <Login></Login>

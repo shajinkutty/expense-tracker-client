@@ -23,6 +23,10 @@ import {
   IO_APPROVE_EXPENSE,
   APPROVE_EXPENSE,
   IO_DELETE_EXPENSE,
+  FETCH_USERS,
+  CHANGE_USER_STATUS,
+  IO_USER_STATUS,
+  ADD_NEW_USER,
 } from "./types";
 
 import axios from "axios";
@@ -35,6 +39,23 @@ const instance = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+export const addNewUser =
+  (fullName, userName, password) => (dispatch, getState) => {
+    instance
+      .post("addUser", {
+        fullName,
+        userName,
+        password,
+      })
+      .then((res) => {
+        dispatch({ type: ADD_NEW_USER, payload: res.data });
+      })
+      .catch((err) => {
+        console.log(err.response);
+        dispatch(errorHandler(err.response.data));
+      });
+  };
 
 export const userLogin = (userName, password) => (dispatch, getState) => {
   dispatch({ type: LOGIN_INIT });
@@ -230,4 +251,30 @@ export const socketApproveExpense = (data) => {
 };
 export const socketDeleteExpense = (id, amount) => {
   return { type: IO_DELETE_EXPENSE, payload: { id, amount } };
+};
+export const socketChangeUserStatus = (id, currentStatus) => {
+  return { type: CHANGE_USER_STATUS, payload: { id, currentStatus } };
+};
+export const fetchUsers = () => (dispatch, getState) => {
+  instance
+    .get("/users")
+    .then((res) => {
+      dispatch({ type: FETCH_USERS, payload: res.data.users });
+    })
+    .catch((err) => {
+      console.log(err.response.data);
+    });
+};
+export const changeUserStatus = (id, currentStatus) => (dispatch, getstate) => {
+  instance
+    .post("switchUserStatus", {
+      userId: id,
+    })
+    .then((res) => {
+      dispatch({ type: CHANGE_USER_STATUS, payload: { id, currentStatus } });
+      socket.emit("change-user-status", { id, currentStatus });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };

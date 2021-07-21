@@ -24,6 +24,9 @@ import {
   IO_APPROVE_EXPENSE,
   APPROVE_EXPENSE,
   IO_DELETE_EXPENSE,
+  FETCH_USERS,
+  CHANGE_USER_STATUS,
+  ADD_NEW_USER,
 } from "./types";
 
 const initialState = {
@@ -47,7 +50,9 @@ const initialState = {
     },
     isLive: true,
   },
+
   userExpense: [],
+  users: [],
 
   alertAction: {
     title: "",
@@ -100,6 +105,62 @@ export const expenseReducer = (state = initialState, action) => {
       };
     case USER_LOGOUT:
       return initialState;
+
+    case CHANGE_USER_STATUS:
+      let tempUsers = [...state.users];
+      if (tempUsers.length > 0) {
+        const userIndex = state.users.findIndex(
+          (user) => user._id === action.payload.id
+        );
+        tempUsers[userIndex] = {
+          ...tempUsers[userIndex],
+          active: !tempUsers[userIndex].active,
+        };
+        return {
+          ...state,
+          users: tempUsers,
+          result: {
+            ...state.result,
+            totalMembers: action.payload.currentStatus
+              ? state.result.totalMembers - 1
+              : state.result.totalMembers + 1,
+            user: {
+              ...state.result.user,
+              active:
+                state.result.user._id === action.payload.id
+                  ? !state.result.user.active
+                  : state.result.user.active,
+            },
+          },
+        };
+      } else {
+        return {
+          ...state,
+          result: {
+            ...state.result,
+            totalMembers: action.payload.currentStatus
+              ? state.result.totalMembers - 1
+              : state.result.totalMembers + 1,
+            user: {
+              ...state.result.user,
+              active:
+                state.result.user._id === action.payload.id
+                  ? !state.result.user.active
+                  : state.result.user.active,
+            },
+          },
+        };
+      }
+
+    case ADD_NEW_USER:
+      return {
+        ...state,
+        users: [...state.users, action.payload],
+        result: {
+          ...state.result,
+          totalMembers: state.result.totalMembers + 1,
+        },
+      };
 
     case FETCH_INIT:
       return {
@@ -349,6 +410,12 @@ export const expenseReducer = (state = initialState, action) => {
           ),
           LiveTotalAmount: state.result.LiveTotalAmount - action.payload.amount,
         },
+      };
+
+    case FETCH_USERS:
+      return {
+        ...state,
+        users: action.payload,
       };
 
     default:
