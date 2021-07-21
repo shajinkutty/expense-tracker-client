@@ -106,7 +106,9 @@ export default function Chips() {
         )}
       </Card>
       <Card className={classes.root} elevation={1}>
-        <Typography>Approved Members</Typography>
+        <Typography>
+          Approved Members ({approverId.length} / {result.totalMembers})
+        </Typography>
         {approverId &&
           approverId.map((approver, index) => (
             <Chip
