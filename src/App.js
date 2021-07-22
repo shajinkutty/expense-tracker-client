@@ -19,7 +19,7 @@ import FullScreenDialog from "./components/FullScreenDialog";
 import { useDispatch } from "react-redux";
 import PrivateRoute from "./routes/PrivateRoute";
 import CustomizedSnackbars from "./components/CustomizedSnackbar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { socket } from "./socket";
 import {
   socketApproveExpense,
@@ -30,18 +30,6 @@ import {
 } from "./redux/actions";
 import Admin from "./routes/Admin";
 
-const theme = createMuiTheme({
-  palette: {
-    type: "dark",
-    primary: lightBlue,
-    secondary: deepOrange,
-  },
-  props: {
-    MuiCard: {
-      elevation: 5,
-    },
-  },
-});
 const useStyles = makeStyles((theme) => ({
   root: {
     height: "90vh",
@@ -52,6 +40,30 @@ const useStyles = makeStyles((theme) => ({
 function App() {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [darkState, setDarkState] = useState(false);
+
+  const handleThemeSet = () => {
+    setDarkState(!darkState);
+    localStorage.setItem("darkMode", !darkState);
+  };
+
+  useEffect(() => {
+    const darkMode = localStorage.getItem("darkMode");
+    setDarkState(darkMode === "true" ? true : false);
+  }, [darkState]);
+
+  const theme = createMuiTheme({
+    palette: {
+      type: darkState ? "dark" : "light",
+      primary: lightBlue,
+      secondary: deepOrange,
+    },
+    props: {
+      MuiCard: {
+        elevation: 5,
+      },
+    },
+  });
 
   useEffect(() => {
     socket.on("receive-expense", (data) => {
@@ -79,7 +91,10 @@ function App() {
       <ThemeProvider theme={theme}>
         <Router>
           <Container className={classes.root}>
-            <ApplicationBar />
+            <ApplicationBar
+              darkState={darkState}
+              setDarkState={handleThemeSet}
+            />
             <FullScreenDialog open={false} />
             <AlertDialog />
             <Switch>

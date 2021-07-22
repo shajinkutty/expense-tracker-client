@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import clsx from "clsx";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
@@ -19,11 +19,14 @@ import MoneyIcon from "@material-ui/icons/Money";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
+import Switch from "@material-ui/core/Switch";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
 import LockIcon from "@material-ui/icons/Lock";
 import { alertAction, userLogout } from "../redux/actions";
 import { useDispatch, useSelector } from "react-redux";
+import { Avatar } from "@material-ui/core";
+import { lightBlue } from "@material-ui/core/colors";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -65,6 +68,14 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
     justifyContent: "flex-end",
   },
+  theme: {
+    display: "flex",
+    alignItems: "center",
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: "space-around",
+  },
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
@@ -84,6 +95,11 @@ const useStyles = makeStyles((theme) => ({
   closeButton: {
     margin: theme.spacing(3),
     height: theme.spacing(8),
+  },
+  avatar: {
+    color: theme.palette.getContrastText(lightBlue[500]),
+    backgroundColor: lightBlue[500],
+    marginRight: "10px",
   },
 }));
 
@@ -112,10 +128,10 @@ const secondaryItems = [
   },
 ];
 
-export default function PersistentDrawerLeft() {
+export default function PersistentDrawerLeft({ darkState, setDarkState }) {
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const { authenticated, result } = useSelector((state) => state.expense);
   const { user, LiveTotalAmount } = result;
   const dispatch = useDispatch();
@@ -172,6 +188,7 @@ export default function PersistentDrawerLeft() {
           }}
         >
           <div className={classes.drawerHeader}>
+            <Avatar className={classes.avatar}>{user.fullName[0]}</Avatar>
             <Typography>{user.fullName}</Typography>
             <IconButton onClick={handleDrawerClose}>
               {theme.direction === "ltr" ? (
@@ -196,6 +213,15 @@ export default function PersistentDrawerLeft() {
               </ListItem>
             ))}
           </List>
+          <Divider />
+          <div className={classes.theme}>
+            <Typography>Dark Theme</Typography>
+            <Switch
+              name="theme"
+              checked={darkState}
+              onChange={() => setDarkState()}
+            ></Switch>
+          </div>
           <Divider />
           <List>
             {secondaryItems.map((item, index) => (
