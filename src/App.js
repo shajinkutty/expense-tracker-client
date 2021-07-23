@@ -22,6 +22,7 @@ import CustomizedSnackbars from "./components/CustomizedSnackbar";
 import { useEffect, useState } from "react";
 import { socket } from "./socket";
 import {
+  rejectRequest,
   socketApproveExpense,
   socketChangeUserStatus,
   socketCloseExpense,
@@ -29,6 +30,7 @@ import {
   socketExpenseUpdate,
 } from "./redux/actions";
 import Admin from "./routes/Admin";
+import { REJECT_REQUEST } from "./redux/types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -80,6 +82,9 @@ function App() {
     });
     socket.on("receive-user-status", ({ id, currentStatus }) => {
       dispatch(socketChangeUserStatus(id, currentStatus));
+    });
+    socket.on("receive-reject-request", (data) => {
+      dispatch({ type: REJECT_REQUEST });
     });
     return () => {
       socket.off();

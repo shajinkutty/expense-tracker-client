@@ -25,8 +25,8 @@ import {
   IO_DELETE_EXPENSE,
   FETCH_USERS,
   CHANGE_USER_STATUS,
-  IO_USER_STATUS,
   ADD_NEW_USER,
+  REJECT_REQUEST,
 } from "./types";
 
 import axios from "axios";
@@ -192,6 +192,9 @@ export const alertResponse = (res) => (dispatch, getState) => {
       case "success":
         dispatch({ type: ALERT_CLOSE });
         break;
+      case "reject request":
+        dispatch(rejectRequest());
+        break;
       default:
         break;
     }
@@ -259,7 +262,7 @@ export const fetchUsers = () => (dispatch, getState) => {
   instance
     .get("/users")
     .then((res) => {
-      dispatch({ type: FETCH_USERS, payload: res.data.users });
+      dispatch({ type: FETCH_USERS, payload: res.data });
     })
     .catch((err) => {
       console.log(err.response.data);
@@ -273,6 +276,19 @@ export const changeUserStatus = (id, currentStatus) => (dispatch, getstate) => {
     .then((res) => {
       dispatch({ type: CHANGE_USER_STATUS, payload: { id, currentStatus } });
       socket.emit("change-user-status", { id, currentStatus });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+export const rejectRequest = () => (dispatch, getState) => {
+  dispatch({ type: ALERT_CLOSE });
+  instance
+    .delete("closeExpense/deleteCloseRequest")
+    .then((res) => {
+      dispatch({ type: REJECT_REQUEST });
+      socket.emit("reject-request", res.data);
     })
     .catch((err) => {
       console.log(err);

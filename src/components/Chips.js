@@ -9,7 +9,7 @@ import { green } from "@material-ui/core/colors";
 import clsx from "clsx";
 import TotalExpenseCard from "./TotalExpenseCard";
 import { useDispatch, useSelector } from "react-redux";
-import { approveExpense, resetExpense } from "../redux/actions";
+import { alertAction, approveExpense, resetExpense } from "../redux/actions";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,6 +42,10 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       backgroundColor: green[700],
     },
+  },
+  closeButton: {
+    margin: theme.spacing(3),
+    height: theme.spacing(8),
   },
 }));
 
@@ -130,6 +134,21 @@ export default function Chips() {
       <div className={classes.dashboard}>
         <TotalExpenseCard />
       </div>
+      <Button
+        variant="outlined"
+        color="secondary"
+        className={classes.closeButton}
+        onClick={() => {
+          dispatch(
+            alertAction(
+              "Are you sure you want to reject the request?",
+              "reject request"
+            )
+          );
+        }}
+      >
+        Reject Request
+      </Button>
     </>
   );
 }

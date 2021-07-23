@@ -25,6 +25,7 @@ export const ALERT_RESET = "ALERT_RESET";
 
 export const CLOSE_EXPENSE = "CLOSE_EXPENSE";
 export const APPROVE_EXPENSE = "APPROVE_EXPENSE";
+export const REJECT_REQUEST = "REJECT_REQUEST";
 
 export const IO_ADD_EXPENSE = "IO_ADD_EXPENSE";
 export const IO_CLOSE_EXPENSE = "IO_CLOSE_EXPENSE";

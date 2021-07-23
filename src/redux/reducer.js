@@ -27,6 +27,7 @@ import {
   FETCH_USERS,
   CHANGE_USER_STATUS,
   ADD_NEW_USER,
+  REJECT_REQUEST,
 } from "./types";
 
 const initialState = {
@@ -320,6 +321,20 @@ export const expenseReducer = (state = initialState, action) => {
           },
         };
       }
+    case REJECT_REQUEST:
+      return {
+        ...state,
+        result: {
+          ...state.result,
+          isLive: true,
+          closeAction: {
+            approverId: [],
+            _id: "",
+            requesterId: "",
+            totalApprovar: 0,
+          },
+        },
+      };
 
     case RESET_EXPENSE:
       return {
