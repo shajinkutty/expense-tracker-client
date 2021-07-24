@@ -37,6 +37,7 @@ const instance = axios.create({
   baseURL: "https://expense-tracker-private.herokuapp.com/",
   headers: {
     "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
   },
 });
 
