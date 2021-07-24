@@ -34,7 +34,7 @@ import { socket } from "../socket";
 // axios.defaults.withCredentials = true;
 axios.defaults.withCredentials = true;
 const instance = axios.create({
-  baseURL: "http://localhost:5000/",
+  baseURL: "https://expense-tracker-private.herokuapp.com/",
   headers: {
     "Content-Type": "application/json",
   },
@@ -97,6 +97,7 @@ export const fetchData = () => async (dispatch, getState) => {
       dispatch({ type: FETCH_SUCCESS, payload: res.data });
     })
     .catch((err) => {
+      console.log(err.response.data);
       dispatch({ type: FETCH_ERROR, error: err.response.data });
     });
 };

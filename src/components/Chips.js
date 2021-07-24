@@ -6,7 +6,6 @@ import Button from "@material-ui/core/Button";
 import Chip from "@material-ui/core/Chip";
 import Card from "@material-ui/core/Card";
 import { green } from "@material-ui/core/colors";
-import clsx from "clsx";
 import TotalExpenseCard from "./TotalExpenseCard";
 import { useDispatch, useSelector } from "react-redux";
 import { alertAction, approveExpense, resetExpense } from "../redux/actions";
@@ -51,16 +50,11 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Chips() {
   const classes = useStyles();
-  const [success, setSuccess] = useState(false);
   const [userApproved, setuserApproved] = useState(false);
   const { result, loading } = useSelector((state) => state.expense);
   const { user, closeAction } = result;
   const { requesterId, approverId } = closeAction;
   const dispatch = useDispatch();
-
-  const buttonClassname = clsx({
-    [classes.buttonSuccess]: success,
-  });
 
   const handleButtonClick = () => {
     dispatch(approveExpense());
@@ -98,7 +92,6 @@ export default function Chips() {
             <Button
               variant="contained"
               color="primary"
-              className={buttonClassname}
               //   disabled={loading}
               onClick={handleButtonClick}
             >

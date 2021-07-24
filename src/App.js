@@ -22,7 +22,6 @@ import CustomizedSnackbars from "./components/CustomizedSnackbar";
 import { useEffect, useState } from "react";
 import { socket } from "./socket";
 import {
-  rejectRequest,
   socketApproveExpense,
   socketChangeUserStatus,
   socketCloseExpense,

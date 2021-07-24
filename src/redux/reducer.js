@@ -228,7 +228,7 @@ export const expenseReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         authenticated: false,
-        error: action.error,
+        error: action.error.error,
       };
 
     case ERROR_HANDLER:

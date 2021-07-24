@@ -42,11 +42,11 @@ function Login() {
     if (authenticated) {
       history.push("/dashboard");
     }
-  }, [authenticated]);
+  }, [authenticated, history]);
 
   useEffect(() => {
     dispatch(checkUserIsActive());
-  }, []);
+  }, [dispatch]);
 
   if (pageLoading) {
     return <LoadingSpinners />;

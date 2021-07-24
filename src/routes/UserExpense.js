@@ -27,7 +27,7 @@ function UserExpense() {
 
   useEffect(() => {
     dispatch(fetchUserExpense());
-  }, []);
+  }, [dispatch]);
 
   if (pageLoading) {
     return <LoadingSpinners />;
