@@ -1,4 +1,4 @@
 import io from "socket.io-client";
 
-const ENDPOINT = "http://localhost:5000";
+const ENDPOINT = "https://expense-tracker-private.herokuapp.com";
 export const socket = io(ENDPOINT);
