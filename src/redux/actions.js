@@ -32,13 +32,13 @@ import {
 import axios from "axios";
 import { socket } from "../socket";
 // axios.defaults.withCredentials = true;
-axios.defaults.withCredentials = true;
 const instance = axios.create({
-  baseURL: "https://expense-tracker-private.herokuapp.com/",
+  baseURL: "http://localhost:5000/",
   headers: {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
   },
+  withCredentials: "include",
 });
 
 export const addNewUser =
@@ -61,10 +61,16 @@ export const addNewUser =
 export const userLogin = (userName, password) => (dispatch, getState) => {
   dispatch({ type: LOGIN_INIT });
   instance
-    .post("login", {
-      userName,
-      password,
-    })
+    .post(
+      "login",
+      {
+        userName,
+        password,
+      },
+      {
+        withCredentials: "include",
+      }
+    )
     .then((res) => {
       dispatch({ type: LOGGED_IN, payload: res.data });
       dispatch(fetchData());
@@ -106,7 +112,7 @@ export const fetchData = () => async (dispatch, getState) => {
 export const checkUserIsActive = () => async (dispatch, getState) => {
   dispatch({ type: APP_START });
   instance
-    .get("checkUserActive")
+    .get("checkUser")
     .then((res) => {
       dispatch({ type: USER_ACTIVE, payload: res.data });
       dispatch(fetchData());
@@ -118,12 +124,18 @@ export const checkUserIsActive = () => async (dispatch, getState) => {
 
 export const userLogout = () => async (dispatch, getState) => {
   instance
-    .get("logout")
+    .post(
+      "logout",
+      {},
+      {
+        withCredentials: "include",
+      }
+    )
     .then((res) => {
       dispatch({ type: USER_LOGOUT });
     })
     .catch((err) => {
-      dispatch({ type: LOGIN_ERROR });
+      dispatch({ type: USER_LOGOUT });
     });
 };
 
