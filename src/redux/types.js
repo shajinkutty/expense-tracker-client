@@ -1,4 +1,4 @@
-export const APP_START = "APP_ATART";
+export const APP_STRT = "APP_START";
 export const LOGIN_INIT = "LOGIN_INIT";
 export const LOGGED_IN = "USER_LOGGED_IN";
 export const LOGIN_ERROR = "LOGIN_ERROR";

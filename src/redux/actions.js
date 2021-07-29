@@ -17,7 +17,7 @@ import {
   CLOSE_EXPENSE,
   RESET_EXPENSE,
   ALERT_RESET,
-  APP_START,
+  APP_STRT,
   IO_ADD_EXPENSE,
   IO_CLOSE_EXPENSE,
   IO_APPROVE_EXPENSE,
@@ -32,18 +32,22 @@ import {
 import axios from "axios";
 import { socket } from "../socket";
 // axios.defaults.withCredentials = true;
-const instance = axios.create({
-  baseURL: "http://localhost:5000/",
-  headers: {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
-  },
-  withCredentials: "include",
-});
+
+const instance = () => {
+  return axios.create({
+    baseURL: "https://expense-tracker-private.herokuapp.com/",
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      tokenid: JSON.parse(localStorage.getItem("uuid")),
+    },
+    withCredentials: "include",
+  });
+};
 
 export const addNewUser =
   (fullName, userName, password) => (dispatch, getState) => {
-    instance
+    instance()
       .post("addUser", {
         fullName,
         userName,
@@ -58,9 +62,9 @@ export const addNewUser =
       });
   };
 
-export const userLogin = (userName, password) => (dispatch, getState) => {
+export const userLogin = (userName, password) => async (dispatch, getState) => {
   dispatch({ type: LOGIN_INIT });
-  instance
+  instance()
     .post(
       "login",
       {
@@ -72,7 +76,10 @@ export const userLogin = (userName, password) => (dispatch, getState) => {
       }
     )
     .then((res) => {
+      const { uuid } = res.data;
+      localStorage.setItem("uuid", JSON.stringify(uuid));
       dispatch({ type: LOGGED_IN, payload: res.data });
+      instance();
       dispatch(fetchData());
     })
     .catch((err) => {
@@ -82,7 +89,7 @@ export const userLogin = (userName, password) => (dispatch, getState) => {
 
 export const changePassword =
   (currentPassword, newPassword) => (dispatch, getState) => {
-    instance
+    instance()
       .post("changePassword", {
         currentPassword,
         newPassword,
@@ -98,7 +105,7 @@ export const changePassword =
 
 export const fetchData = () => async (dispatch, getState) => {
   dispatch({ type: FETCH_INIT });
-  instance
+  instance()
     .get("dashboard")
     .then((res) => {
       dispatch({ type: FETCH_SUCCESS, payload: res.data });
@@ -110,8 +117,8 @@ export const fetchData = () => async (dispatch, getState) => {
 };
 
 export const checkUserIsActive = () => async (dispatch, getState) => {
-  dispatch({ type: APP_START });
-  instance
+  dispatch({ type: APP_STRT });
+  instance()
     .get("checkUser")
     .then((res) => {
       dispatch({ type: USER_ACTIVE, payload: res.data });
@@ -123,7 +130,7 @@ export const checkUserIsActive = () => async (dispatch, getState) => {
 };
 
 export const userLogout = () => async (dispatch, getState) => {
-  instance
+  instance()
     .post(
       "logout",
       {},
@@ -132,6 +139,7 @@ export const userLogout = () => async (dispatch, getState) => {
       }
     )
     .then((res) => {
+      localStorage.removeItem("uuid");
       dispatch({ type: USER_LOGOUT });
     })
     .catch((err) => {
@@ -142,7 +150,7 @@ export const userLogout = () => async (dispatch, getState) => {
 export const addExpense =
   (amount, date, description) => async (dispatch, getState) => {
     dispatch({ type: LOADING });
-    instance
+    instance()
       .post("expense/addExpense", {
         amount,
         date,
@@ -154,12 +162,12 @@ export const addExpense =
         socket.emit("send-expense", res.data);
       })
       .catch((err) => {
-        dispatch({ type: ERROR_HANDLER, message: err.response.data.error });
+        dispatch({ type: ERROR_HANDLER, message: err.response.data });
       });
   };
 export const deleteExpense = (id, amount) => (dispatch, getState) => {
   dispatch({ type: ALERT_CLOSE });
-  instance
+  instance()
     .delete(`expense/${id}`)
     .then((res) => {
       dispatch({ type: DELETE_EXPENSE, payload: { id, amount } });
@@ -174,7 +182,7 @@ export const fetchUserExpense = () => (dispatch, getState) => {
   dispatch({ type: LOADING });
   const { expense } = getState();
   const { user } = expense.result;
-  instance
+  instance()
     .get(`expense/${user._id}`)
     .then((res) => {
       dispatch({ type: FETCH_USER_EXPENSE, payload: res.data });
@@ -223,7 +231,7 @@ export const errorHandler = (message) => {
 
 export const closeExpense = () => (dispatch, getState) => {
   dispatch({ type: ALERT_CLOSE });
-  instance
+  instance()
     .post("closeExpense")
     .then((res) => {
       dispatch({ type: CLOSE_EXPENSE, payload: res.data });
@@ -237,7 +245,7 @@ export const closeExpense = () => (dispatch, getState) => {
 export const approveExpense = () => (dispatch, getState) => {
   const { result } = getState().expense;
   const { closeAction } = result;
-  instance
+  instance()
     .patch(`closeExpense/approved/${closeAction._id}`)
     .then((res) => {
       dispatch({ type: APPROVE_EXPENSE, payload: res.data });
@@ -273,7 +281,7 @@ export const socketChangeUserStatus = (id, currentStatus) => {
   return { type: CHANGE_USER_STATUS, payload: { id, currentStatus } };
 };
 export const fetchUsers = () => (dispatch, getState) => {
-  instance
+  instance()
     .get("/users")
     .then((res) => {
       dispatch({ type: FETCH_USERS, payload: res.data });
@@ -283,7 +291,7 @@ export const fetchUsers = () => (dispatch, getState) => {
     });
 };
 export const changeUserStatus = (id, currentStatus) => (dispatch, getstate) => {
-  instance
+  instance()
     .post("switchUserStatus", {
       userId: id,
     })
@@ -298,7 +306,7 @@ export const changeUserStatus = (id, currentStatus) => (dispatch, getstate) => {
 
 export const rejectRequest = () => (dispatch, getState) => {
   dispatch({ type: ALERT_CLOSE });
-  instance
+  instance()
     .delete("closeExpense/deleteCloseRequest")
     .then((res) => {
       dispatch({ type: REJECT_REQUEST });

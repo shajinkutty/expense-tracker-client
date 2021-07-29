@@ -18,7 +18,7 @@ import {
   CLOSE_EXPENSE,
   RESET_EXPENSE,
   ALERT_RESET,
-  APP_START,
+  APP_STRT,
   IO_ADD_EXPENSE,
   IO_CLOSE_EXPENSE,
   IO_APPROVE_EXPENSE,
@@ -67,7 +67,7 @@ const initialState = {
 
 export const expenseReducer = (state = initialState, action) => {
   switch (action.type) {
-    case APP_START:
+    case APP_STRT:
       return {
         ...state,
         pageLoading: true,
@@ -89,6 +89,7 @@ export const expenseReducer = (state = initialState, action) => {
       return {
         ...state,
         authenticated: true,
+        loading: false,
       };
 
     case LOGIN_ERROR:
@@ -234,6 +235,10 @@ export const expenseReducer = (state = initialState, action) => {
     case ERROR_HANDLER:
       return {
         ...state,
+        loading: false,
+        pageLoading: false,
+        authenticated:
+          action.message === "Auth Error - no Token" ? false : true,
         error: action.message,
       };
     case ALERT:

@@ -1,11 +1,14 @@
 import React, { useEffect } from "react";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core";
+import Card from "@material-ui/core/Card";
+import Typography from "@material-ui/core/Typography";
 import ExpenseList from "../components/ExpenseList";
 import TotalExpenseCard from "../components/TotalExpenseCard";
 import { useDispatch, useSelector } from "react-redux";
 import { resetAlert } from "../redux/actions";
 import FetchLoader from "../components/FetchLoader";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,16 +24,20 @@ const useStyles = makeStyles((theme) => ({
     fontSize: theme.spacing(3),
     // color: "#ffff",
   },
+  members: {
+    padding: theme.spacing(1),
+  },
 }));
 
 function Dashboard() {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const { loading } = useSelector((state) => state.expense);
+  const { loading, result } = useSelector((state) => state.expense);
 
   useEffect(() => {
     dispatch(resetAlert());
+    // dispatch(fetchData());
   }, [dispatch]);
 
   // useEffect(() => {
@@ -52,12 +59,20 @@ function Dashboard() {
 
   return (
     <>
-      <Grid container>
+      <Grid container spacing={2}>
         <Grid item xs={12} md={2}></Grid>
         <Grid item xs={12} md={8} className={classes.root} elevation={1}>
           {!loading ? <TotalExpenseCard /> : <FetchLoader />}
         </Grid>
-        <Grid item xs={12} md={2}></Grid>
+        <Grid item xs={12} md={2} component={Link} to="/admin/dashboard">
+          {!loading && (
+            <Card elevation={1} className={classes.members}>
+              <Typography variant="body2">
+                Active Members : {result.totalMembers}
+              </Typography>
+            </Card>
+          )}
+        </Grid>
         {!loading && <ExpenseList />}
       </Grid>
     </>
