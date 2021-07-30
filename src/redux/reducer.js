@@ -287,6 +287,7 @@ export const expenseReducer = (state = initialState, action) => {
           type: "",
           data: {},
         },
+        error: "",
       };
     case CLOSE_EXPENSE:
       return {
