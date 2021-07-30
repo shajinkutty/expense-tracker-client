@@ -14,6 +14,7 @@ import {
   errorHandler,
   fetchUsers,
 } from "../redux/actions";
+import FetchLoader from "../components/FetchLoader";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -94,7 +95,7 @@ function Admin() {
           <Typography variant="body2">User Name</Typography>
           <Typography variant="body2">Active</Typography>
         </div>
-        {users &&
+        {users ? (
           users.map((user) => (
             <div className={classes.box} key={user._id}>
               <Chip
@@ -111,7 +112,10 @@ function Admin() {
                 disabled={result.user._id === user._id}
               />
             </div>
-          ))}
+          ))
+        ) : (
+          <FetchLoader />
+        )}
       </Card>
       <Card className={classes.root} elevation={1}>
         <Typography variant="body2">Add New User</Typography>

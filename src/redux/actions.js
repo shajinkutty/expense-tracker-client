@@ -99,6 +99,7 @@ export const changePassword =
         dispatch(alertAction("Password has been changed", "success"));
       })
       .catch((err) => {
+        console.log(err.data);
         dispatch(errorHandler(err.response.data));
       });
   };
