@@ -63,7 +63,7 @@ function TotalExpenseCard() {
       </Grid>
       <Grid item xs={6}>
         <Paper className={classes.circle} elevation={1}>
-          <Typography className={classes.label}>Your Contribution</Typography>
+          <Typography className={classes.label}>My Contribution</Typography>
           <Typography className={classes.secondaryText} color="textPrimary">
             {userExpense ? userExpense : 0}
           </Typography>
