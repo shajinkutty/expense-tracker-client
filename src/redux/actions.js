@@ -35,7 +35,7 @@ import { socket } from "../socket";
 
 const instance = () => {
   return axios.create({
-    baseURL: "https://expense-tracker-private.herokuapp.com/",
+    baseURL: "https://expense-tracker-demo-server.herokuapp.com/",
     headers: {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",

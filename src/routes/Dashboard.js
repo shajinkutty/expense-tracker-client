@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
+    marginTop: theme.spacing(2),
   },
   secondaryText: {
     fontSize: theme.spacing(3),
@@ -26,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
   },
   members: {
     padding: theme.spacing(1),
+    marginTop: theme.spacing(2),
   },
 }));
 

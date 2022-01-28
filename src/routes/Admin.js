@@ -99,7 +99,7 @@ function Admin() {
           users.map((user) => (
             <div className={classes.box} key={user._id}>
               <Chip
-                avatar={<Avatar>S</Avatar>}
+                avatar={<Avatar>{user.fullName[0]}</Avatar>}
                 label={user.fullName}
                 color="primary"
                 disabled={!user.active}

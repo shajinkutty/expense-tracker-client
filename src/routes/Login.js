@@ -54,7 +54,21 @@ function Login() {
   return (
     <Container>
       <Grid container className={classes.container}>
-        <Grid item xs={12} md={3}></Grid>
+        <Grid item xs={12} md={3}>
+          <div className="Login">
+            <p>Use below login credentials</p>
+            <ul>
+              <li>
+                <p>Username : user1</p>
+                <p>password : user1234</p>
+              </li>
+              <li>
+                <p>Username : user2</p>
+                <p>password : user1234</p>
+              </li>
+            </ul>
+          </div>
+        </Grid>
         <Grid item xs={12} md={6}>
           <form noValidate autoComplete="off">
             <TextField
